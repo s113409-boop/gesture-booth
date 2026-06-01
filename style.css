@@ -25,6 +25,7 @@ h1 {
   margin-top: 0;
   color: #666;
   font-size: 14px;
+  line-height: 1.6;
 }
 
 .camera-card {
@@ -60,6 +61,7 @@ video {
 #gestureText {
   margin: 12px 0;
   font-size: 16px;
+  line-height: 1.5;
 }
 
 .buttons {
