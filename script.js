@@ -22,6 +22,7 @@ const resultCtx = resultCanvas.getContext("2d");
 let handLandmarker;
 let isCameraOn = false;
 let isCapturing = false;
+let isDetecting = false;
 let currentSlot = 1;
 let photos = [];
 
@@ -36,12 +37,25 @@ const filters = [
 ];
 startBtn.addEventListener("click", async () => {
   try {
+    statusText.textContent = "正在開啟相機...";
+    gestureText.textContent = "準備啟動手勢偵測...";
+
     await setupCamera();
+
+    statusText.textContent = "相機已開啟，正在載入手勢模型...";
     await setupHandLandmarker();
-    detectLoop();
+
+    statusText.textContent = "手勢模型已載入，請把手放到鏡頭中央";
+    gestureText.textContent = "手勢偵測啟動中...";
+
+    if (!isDetecting) {
+      isDetecting = true;
+      detectLoop();
+    }
   } catch (error) {
     console.error(error);
-    statusText.textContent = "相機或手勢辨識啟動失敗，請確認權限與網路";
+    statusText.textContent = `啟動失敗：${error.name || error.message}`;
+    gestureText.textContent = "手勢偵測沒有成功啟動";
   }
 });
 
@@ -108,11 +122,15 @@ async function setupHandLandmarker() {
     minTrackingConfidence: 0.3
   });
 
+  console.log("HandLandmarker 載入完成");
+}
+
   statusText.textContent = "手勢模型已載入，請把手放到鏡頭中央";
 }
 
 function detectLoop() {
   if (!handLandmarker || !isCameraOn) {
+    gestureText.textContent = "手勢模型或相機尚未準備好";
     requestAnimationFrame(detectLoop);
     return;
   }
