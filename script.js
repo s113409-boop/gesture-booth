@@ -149,10 +149,10 @@ const frameOptions = {
     label: "Flash Night",
     src: "/frames/flash-night.png",
     boxes: [
-      { x: 0.145, y: 0.145, w: 0.335, h: 0.255 },
-      { x: 0.520, y: 0.145, w: 0.335, h: 0.255 },
-      { x: 0.145, y: 0.455, w: 0.335, h: 0.255 },
-      { x: 0.520, y: 0.455, w: 0.335, h: 0.255 }
+      { x: 0.105, y: 0.155, w: 0.365, h: 0.315 },
+      { x: 0.525, y: 0.155, w: 0.365, h: 0.315 },
+      { x: 0.105, y: 0.515, w: 0.365, h: 0.315 },
+      { x: 0.525, y: 0.515, w: 0.365, h: 0.315 }
     ]
   },
 
@@ -616,6 +616,10 @@ async function drawFinalPhoto() {
 
   resultCtx.clearRect(0, 0, canvasW, canvasH);
 
+  // 先畫相框，避免相框透明區有殘留白底時蓋住照片
+  resultCtx.drawImage(frameImg, 0, 0, canvasW, canvasH);
+
+  // 再把照片畫進每個洞裡
   frame.boxes.forEach((box, index) => {
     const x = box.x * canvasW;
     const y = box.y * canvasH;
@@ -624,11 +628,32 @@ async function drawFinalPhoto() {
 
     if (photos[index]) {
       const processed = createProcessedPhoto(photos[index]);
+
+      resultCtx.save();
+
+      const radius = Math.min(w, h) * 0.035;
+      roundRectPath(resultCtx, x, y, w, h, radius);
+      resultCtx.clip();
+
       drawImageCover(resultCtx, processed, x, y, w, h);
+
+      resultCtx.restore();
     }
   });
+}
 
-  resultCtx.drawImage(frameImg, 0, 0, canvasW, canvasH);
+function roundRectPath(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
 }
 
 function drawImageCover(ctx, img, x, y, w, h) {
