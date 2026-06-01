@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 手勢四格拍貼機</title>
+  <title>AI Gesture Photobooth</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="app">
-    <h1>AI 手勢四格拍貼機</h1>
-    <p class="subtitle">
-      比 1 拍第 1 格，比 2 拍第 2 格，比 3 拍第 3 格，比 4 拍第 4 格
-    </p>
+    <header class="hero">
+      <p class="eyebrow">AI GESTURE PHOTOBOOTH</p>
+      <h1>AI 手勢四格拍貼機</h1>
+      <p class="subtitle">比 1 / 2 / 3 / 4 根手指依序拍照，拍完後再選濾鏡、特效、相框與貼紙。</p>
+    </header>
 
     <section class="camera-card">
       <video id="video" autoplay playsinline muted></video>
@@ -19,8 +20,8 @@
       <div id="countdown" class="countdown"></div>
     </section>
 
-    <p id="status">請按下「開啟相機」</p>
-    <p id="gestureText">目前手勢：尚未偵測</p>
+    <p id="status" class="status">請按下「開啟相機」</p>
+    <p id="gestureText" class="gesture">目前手勢：尚未偵測</p>
 
     <div class="buttons">
       <button id="startBtn">開啟相機</button>
@@ -44,18 +45,24 @@
 
       <div class="control-group">
         <h3>相框樣式</h3>
-        <div id="frameControls" class="option-row"></div>
+        <div id="frameControls" class="option-row frame-options"></div>
       </div>
 
       <div class="control-group">
         <h3>Y2K 貼紙</h3>
         <div id="stickerControls" class="option-row"></div>
-        <button id="clearStickerBtn" class="small-btn">清除貼紙</button>
+        <div class="sub-buttons">
+          <button id="clearStickerBtn" class="small-btn">清除貼紙</button>
+          <button id="randomStickerBtn" class="small-btn">隨機裝飾</button>
+        </div>
+        <p class="hint">貼紙可在成品預覽上拖曳移動。</p>
       </div>
     </section>
 
-    <h2>成品預覽</h2>
-    <canvas id="resultCanvas"></canvas>
+    <section class="preview">
+      <h2>成品預覽</h2>
+      <canvas id="resultCanvas"></canvas>
+    </section>
   </main>
 
   <script type="module" src="script.js"></script>
