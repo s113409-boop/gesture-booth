@@ -16,6 +16,7 @@
 
     <section class="camera-card">
       <video id="video" autoplay playsinline muted></video>
+      <div id="flash" class="flash"></div>
       <div id="countdown" class="countdown"></div>
     </section>
 
@@ -25,8 +26,39 @@
     <div class="buttons">
       <button id="startBtn">開啟相機</button>
       <button id="resetBtn">重新拍攝</button>
+      <button id="flashBtn">閃光燈：開</button>
       <button id="downloadBtn">下載四格照</button>
     </div>
+
+    <section class="editor">
+      <h2>照片編輯</h2>
+
+      <div class="control-group">
+        <h3>濾鏡</h3>
+        <div id="filterControls" class="option-row"></div>
+      </div>
+
+      <div class="control-group">
+        <h3>特效</h3>
+        <div id="effectControls" class="option-row"></div>
+      </div>
+
+      <div class="control-group">
+        <h3>相框格式</h3>
+        <div id="layoutControls" class="option-row"></div>
+      </div>
+
+      <div class="control-group">
+        <h3>相框圖案</h3>
+        <div id="frameControls" class="option-row"></div>
+      </div>
+
+      <div class="control-group">
+        <h3>Y2K 貼紙</h3>
+        <div id="stickerControls" class="option-row"></div>
+        <button id="clearStickerBtn" class="small-btn">清除貼紙</button>
+      </div>
+    </section>
 
     <h2>四格照片</h2>
     <canvas id="resultCanvas"></canvas>
