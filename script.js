@@ -19,7 +19,6 @@ const resultCtx = resultCanvas.getContext("2d");
 
 const filterControls = document.getElementById("filterControls");
 const effectControls = document.getElementById("effectControls");
-const layoutControls = document.getElementById("layoutControls");
 const frameControls = document.getElementById("frameControls");
 const stickerControls = document.getElementById("stickerControls");
 const clearStickerBtn = document.getElementById("clearStickerBtn");
@@ -43,36 +42,17 @@ let flashEnabled = true;
 
 let selectedFilter = "original";
 let selectedEffect = "none";
-let selectedLayout = "square";
-let selectedFrame = "redRetro";
+let selectedFrame = "pinkStrip";
 
 let stickers = [];
 
 const filterOptions = {
-  original: {
-    label: "原圖",
-    value: "none"
-  },
-  japanese: {
-    label: "日系清透",
-    value: "brightness(120%) contrast(82%) saturate(75%)"
-  },
-  korean: {
-    label: "韓系奶油",
-    value: "brightness(118%) contrast(92%) saturate(105%)"
-  },
-  vintage: {
-    label: "復古底片",
-    value: "sepia(75%) brightness(108%) contrast(115%) saturate(85%)"
-  },
-  vivid: {
-    label: "高對比鮮豔",
-    value: "contrast(155%) saturate(170%) brightness(105%)"
-  },
-  blackWhite: {
-    label: "黑白拍貼",
-    value: "grayscale(100%) contrast(150%) brightness(105%)"
-  }
+  original: { label: "原圖", value: "none" },
+  japanese: { label: "日系清透", value: "brightness(120%) contrast(84%) saturate(78%)" },
+  creamy: { label: "韓系奶油", value: "brightness(118%) contrast(94%) saturate(104%)" },
+  vintage: { label: "復古底片", value: "sepia(72%) brightness(108%) contrast(112%) saturate(84%)" },
+  vivid: { label: "高對比鮮豔", value: "contrast(150%) saturate(165%) brightness(104%)" },
+  blackwhite: { label: "黑白拍貼", value: "grayscale(100%) contrast(150%) brightness(106%)" }
 };
 
 const effectOptions = {
@@ -82,32 +62,20 @@ const effectOptions = {
   convex: "凸透鏡"
 };
 
-const layoutOptions = {
-  square: "2×2 四格",
-  strip: "直式四連拍",
-  card: "橫式拍貼卡"
-};
-
 const frameOptions = {
-  redRetro: "紅色復古",
-  whiteKorean: "白色韓式",
-  creamCute: "奶油可愛",
-  blackFilm: "黑色底片",
-  silverY2K: "Y2K 銀色",
-  pinkHeart: "粉色愛心",
-  blueStar: "藍色星星",
-  doodle: "塗鴉貼紙"
+  pinkStrip: "粉紅直式韓拍框",
+  silverMeta: "銀色金屬韓拍框"
 };
 
 const stickerOptions = [
-  "⭐",
-  "💖",
-  "⚡",
-  "🦋",
-  "💿",
-  "✨",
-  "🕶️",
-  "🎧"
+  { key: "sparkle", label: "白閃星" },
+  { key: "heartGlow", label: "粉光愛心" },
+  { key: "swirl", label: "糖果旋渦" },
+  { key: "wing", label: "天使翅膀" },
+  { key: "pixelStar", label: "像素星鏈" },
+  { key: "glow", label: "泡泡光斑" },
+  { key: "butterfly", label: "蝴蝶" },
+  { key: "ribbon", label: "粉緞帶" }
 ];
 
 startBtn.addEventListener("click", async () => {
@@ -178,8 +146,8 @@ async function setupCamera() {
   const stream = await navigator.mediaDevices.getUserMedia({
     video: {
       facingMode: "user",
-      width: { ideal: 640 },
-      height: { ideal: 480 }
+      width: { ideal: 720 },
+      height: { ideal: 960 }
     },
     audio: false
   });
@@ -215,8 +183,6 @@ async function setupHandLandmarker() {
     minHandPresenceConfidence: 0.2,
     minTrackingConfidence: 0.2
   });
-
-  console.log("HandLandmarker 已載入");
 }
 
 function detectLoop() {
@@ -284,7 +250,6 @@ function checkGestureAndCapture(fingerCount) {
 
 function countFingers(landmarks) {
   let count = 0;
-
   const wrist = landmarks[0];
 
   const fingers = [
@@ -340,7 +305,7 @@ async function captureWithCountdown(slot) {
     currentSlot++;
     statusText.textContent = `第 ${slot} 格完成，請比 ${currentSlot} 拍第 ${currentSlot} 格`;
   } else {
-    statusText.textContent = "四格拍照完成，可以選濾鏡、特效、相框與貼紙！";
+    statusText.textContent = "四格拍照完成，可以開始編輯照片！";
   }
 
   await wait(1000);
@@ -349,14 +314,14 @@ async function captureWithCountdown(slot) {
 
 async function flashScreen() {
   if (!flashEnabled) {
-    await wait(300);
+    await wait(250);
     return;
   }
 
   flash.classList.add("active");
   await wait(120);
   flash.classList.remove("active");
-  await wait(180);
+  await wait(160);
 }
 
 function capturePhoto() {
@@ -367,11 +332,9 @@ function capturePhoto() {
   canvas.height = video.videoHeight;
 
   ctx.save();
-
   ctx.translate(canvas.width, 0);
   ctx.scale(-1, 1);
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
   ctx.restore();
 
   return canvas;
@@ -425,7 +388,6 @@ function applyMosaicEffect(canvas, blockSize) {
   for (let y = 0; y < height; y += blockSize) {
     for (let x = 0; x < width; x += blockSize) {
       const index = (y * width + x) * 4;
-
       const r = data[index];
       const g = data[index + 1];
       const b = data[index + 2];
@@ -438,7 +400,6 @@ function applyMosaicEffect(canvas, blockSize) {
 
 function applyConvexEffect(canvas) {
   const ctx = canvas.getContext("2d");
-
   const width = canvas.width;
   const height = canvas.height;
 
@@ -450,7 +411,7 @@ function applyConvexEffect(canvas) {
 
   const cx = width / 2;
   const cy = height / 2;
-  const r = Math.min(width, height) / 2.2;
+  const r = Math.min(width, height) / 2.3;
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -489,11 +450,10 @@ function drawFinalPhoto() {
   }
 
   const layout = getLayoutSettings();
-
   resultCanvas.width = layout.canvasW;
   resultCanvas.height = layout.canvasH;
 
-  drawFrameBackground(layout.canvasW, layout.canvasH);
+  drawFrameBackground(layout);
 
   photos.forEach((photo, index) => {
     const box = layout.photoBoxes[index];
@@ -501,203 +461,462 @@ function drawFinalPhoto() {
 
     const processed = createProcessedPhoto(photo);
 
-    drawImageCover(
-      resultCtx,
-      processed,
-      box.x,
-      box.y,
-      box.w,
-      box.h
-    );
-
-    drawPhotoBorder(box.x, box.y, box.w, box.h, index);
+    if (selectedFrame === "silverMeta") {
+      drawSilverPhotoPanel(processed, box);
+    } else {
+      drawPinkStripPhoto(processed, box, index);
+    }
   });
 
-  drawFrameText(layout.canvasW, layout.canvasH);
+  drawFrameTitle(layout);
   drawStickers();
 }
 
 function getLayoutSettings() {
-  if (selectedLayout === "strip") {
-    const canvasW = 650;
-    const canvasH = 1900;
-    const photoW = 520;
-    const photoH = 330;
-    const gap = 30;
-    const startX = 65;
-    const startY = 120;
-
+  if (selectedFrame === "silverMeta") {
     return {
-      canvasW,
-      canvasH,
-      photoBoxes: [0, 1, 2, 3].map((i) => ({
-        x: startX,
-        y: startY + i * (photoH + gap),
-        w: photoW,
-        h: photoH
-      }))
-    };
-  }
-
-  if (selectedLayout === "card") {
-    const canvasW = 1200;
-    const canvasH = 800;
-    const photoW = 430;
-    const photoH = 260;
-    const gap = 26;
-    const startX = 170;
-    const startY = 110;
-
-    return {
-      canvasW,
-      canvasH,
+      canvasW: 980,
+      canvasH: 1180,
       photoBoxes: [
-        { x: startX, y: startY, w: photoW, h: photoH },
-        { x: startX + photoW + gap, y: startY, w: photoW, h: photoH },
-        { x: startX, y: startY + photoH + gap, w: photoW, h: photoH },
-        { x: startX + photoW + gap, y: startY + photoH + gap, w: photoW, h: photoH }
+        { x: 155, y: 165, w: 280, h: 280 },
+        { x: 545, y: 165, w: 280, h: 280 },
+        { x: 155, y: 525, w: 280, h: 280 },
+        { x: 545, y: 525, w: 280, h: 280 }
       ]
     };
   }
 
-  const canvasW = 900;
-  const canvasH = 1250;
-  const photoW = 390;
-  const photoH = 460;
-  const gap = 25;
-  const startX = 42;
-  const startY = 150;
-
   return {
-    canvasW,
-    canvasH,
+    canvasW: 520,
+    canvasH: 1680,
     photoBoxes: [
-      { x: startX, y: startY, w: photoW, h: photoH },
-      { x: startX + photoW + gap, y: startY, w: photoW, h: photoH },
-      { x: startX, y: startY + photoH + gap, w: photoW, h: photoH },
-      { x: startX + photoW + gap, y: startY + photoH + gap, w: photoW, h: photoH }
+      { x: 85, y: 110, w: 350, h: 300 },
+      { x: 85, y: 460, w: 350, h: 300 },
+      { x: 85, y: 810, w: 350, h: 300 },
+      { x: 85, y: 1160, w: 350, h: 300 }
     ]
   };
 }
 
-function drawFrameBackground(w, h) {
+function drawFrameBackground(layout) {
+  const w = layout.canvasW;
+  const h = layout.canvasH;
   const ctx = resultCtx;
 
-  const colors = {
-    redRetro: "#a93824",
-    whiteKorean: "#ffffff",
-    creamCute: "#f2dfbd",
-    blackFilm: "#111111",
-    silverY2K: "#d9d9e3",
-    pinkHeart: "#f7b6c8",
-    blueStar: "#bcd7ff",
-    doodle: "#fff3d8"
-  };
+  if (selectedFrame === "pinkStrip") {
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, "#ff4d8f");
+    grad.addColorStop(0.45, "#ff86b2");
+    grad.addColorStop(1, "#fff8fb");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
 
-  ctx.fillStyle = colors[selectedFrame] || "#ffffff";
-  ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.fillRect(50, 40, w - 100, h - 80);
 
-  if (selectedFrame === "redRetro") {
-    drawWaveLine(70, 70, 260, "#fff");
-    drawWaveLine(w - 310, 70, 260, "#fff");
-    drawWaveLine(70, h - 80, 260, "#fff");
-  }
+    ctx.strokeStyle = "rgba(255,255,255,0.9)";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(28, 28, w - 56, h - 56);
 
-  if (selectedFrame === "whiteKorean") {
-    ctx.fillStyle = "#111";
-    ctx.font = "bold 52px serif";
-    ctx.textAlign = "center";
-    ctx.fillText("OH! PHOTO", w / 2, h - 65);
-  }
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 18px Arial";
+    ctx.textAlign = "left";
+    ctx.save();
+    ctx.translate(24, h / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText("SEOUL MOOD", 0, 0);
+    ctx.restore();
 
-  if (selectedFrame === "creamCute") {
-    drawSidePattern(w, h, ["🐼", "🐰", "🧸"]);
-  }
+    ctx.save();
+    ctx.translate(w - 8, h / 2);
+    ctx.rotate(Math.PI / 2);
+    ctx.fillText("SEOUL MOOD", 0, 0);
+    ctx.restore();
 
-  if (selectedFrame === "blackFilm") {
-    ctx.fillStyle = "#fff";
-    for (let y = 40; y < h; y += 70) {
-      ctx.fillRect(20, y, 35, 28);
-      ctx.fillRect(w - 55, y, 35, 28);
-    }
-  }
+    ctx.strokeStyle = "rgba(255,255,255,0.9)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(70, h - 150);
+    ctx.lineTo(w - 70, h - 150);
+    ctx.stroke();
 
-  if (selectedFrame === "silverY2K") {
-    drawRandomStars(w, h, "#ffffff", "#7b61ff");
-  }
-
-  if (selectedFrame === "pinkHeart") {
-    drawRepeatingEmoji(w, h, "💖", 60);
-  }
-
-  if (selectedFrame === "blueStar") {
-    drawRepeatingEmoji(w, h, "⭐", 70);
-  }
-
-  if (selectedFrame === "doodle") {
-    drawRepeatingEmoji(w, h, "✨", 65);
-    drawRepeatingEmoji(w, h, "⚡", 100);
-  }
-}
-
-function drawPhotoBorder(x, y, w, h, index) {
-  resultCtx.strokeStyle =
-    selectedFrame === "blackFilm" ? "#ffffff" : "rgba(255,255,255,0.9)";
-  resultCtx.lineWidth = 8;
-  resultCtx.strokeRect(x, y, w, h);
-
-  resultCtx.fillStyle = "rgba(255, 255, 255, 0.85)";
-  resultCtx.fillRect(x + 12, y + 12, 78, 34);
-
-  resultCtx.fillStyle = "#111";
-  resultCtx.font = "bold 20px Arial";
-  resultCtx.textAlign = "left";
-  resultCtx.fillText(`No.${index + 1}`, x + 24, y + 36);
-}
-
-function drawFrameText(w, h) {
-  resultCtx.textAlign = "center";
-
-  if (selectedFrame === "redRetro") {
-    resultCtx.fillStyle = "#fff";
-    resultCtx.font = "bold 54px Arial";
-    resultCtx.fillText("SMILE", w / 2, 95);
-
-    resultCtx.font = "bold 28px Arial";
-    resultCtx.strokeStyle = "#fff";
-    resultCtx.lineWidth = 5;
-    resultCtx.strokeText("SNAPPP", w / 2, h - 50);
-    resultCtx.fillText("SNAPPP", w / 2, h - 50);
     return;
   }
 
-  if (selectedFrame === "blackFilm") {
-    resultCtx.fillStyle = "#fff";
-  } else {
-    resultCtx.fillStyle = "#111";
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, "#f1f1f4");
+  bg.addColorStop(0.5, "#d7d9e2");
+  bg.addColorStop(1, "#f5f6fb");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  for (let i = 0; i < w; i += 32) {
+    ctx.fillStyle = i % 64 === 0 ? "rgba(255,255,255,0.35)" : "rgba(120,130,150,0.08)";
+    ctx.fillRect(i, 0, 16, h);
   }
 
-  resultCtx.font = "bold 32px Arial";
-  resultCtx.fillText("AI Gesture Booth", w / 2, h - 35);
+  drawBolt(40, 40);
+  drawBolt(w - 40, 40);
+  drawBolt(40, h - 40);
+  drawBolt(w - 40, h - 40);
+
+  for (let i = 0; i < 6; i++) {
+    drawMiniTopIcon(330 + i * 55, 50);
+  }
+
+  ctx.fillStyle = "#0e2955";
+  roundRect(ctx, w / 2 - 150, h - 110, 300, 70, 12, true, false);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 28px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("META FRAME", w / 2, h - 66);
+}
+
+function drawPinkStripPhoto(photo, box, index) {
+  resultCtx.fillStyle = "#ffffff";
+  resultCtx.fillRect(box.x - 8, box.y - 8, box.w + 16, box.h + 16);
+
+  drawImageCover(resultCtx, photo, box.x, box.y, box.w, box.h);
+
+  resultCtx.strokeStyle = "#fff";
+  resultCtx.lineWidth = 4;
+  resultCtx.strokeRect(box.x, box.y, box.w, box.h);
+
+  resultCtx.fillStyle = "rgba(255,255,255,0.92)";
+  resultCtx.fillRect(box.x + 10, box.y + 10, 70, 28);
+
+  resultCtx.fillStyle = "#ff4d8f";
+  resultCtx.font = "bold 18px Arial";
+  resultCtx.textAlign = "left";
+  resultCtx.fillText(`No.${index + 1}`, box.x + 18, box.y + 30);
+}
+
+function drawSilverPhotoPanel(photo, box) {
+  const ctx = resultCtx;
+
+  const pad = 30;
+  const panelX = box.x - pad;
+  const panelY = box.y - pad;
+  const panelW = box.w + pad * 2;
+  const panelH = box.h + pad * 2;
+
+  const grad = ctx.createLinearGradient(panelX, panelY, panelX + panelW, panelY + panelH);
+  grad.addColorStop(0, "#edf1ff");
+  grad.addColorStop(0.5, "#bcc5df");
+  grad.addColorStop(1, "#f6f8ff");
+  ctx.fillStyle = grad;
+  roundRect(ctx, panelX, panelY, panelW, panelH, 18, true, false);
+
+  ctx.strokeStyle = "rgba(116,126,170,0.5)";
+  ctx.lineWidth = 5;
+  roundRect(ctx, panelX, panelY, panelW, panelH, 18, false, true);
+
+  const cx = box.x + box.w / 2;
+  const cy = box.y + box.h / 2;
+  const r = box.w / 2;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.clip();
+
+  drawImageCover(ctx, photo, box.x, box.y, box.w, box.h);
+  ctx.restore();
+
+  const ringGrad = ctx.createRadialGradient(cx, cy, r * 0.1, cx, cy, r + 24);
+  ringGrad.addColorStop(0, "rgba(255,255,255,0)");
+  ringGrad.addColorStop(0.7, "#ecf0ff");
+  ringGrad.addColorStop(1, "#7f86ad");
+
+  ctx.strokeStyle = ringGrad;
+  ctx.lineWidth = 26;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r + 5, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.strokeStyle = "rgba(255,255,255,0.75)";
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r - 6, 0, Math.PI * 2);
+  ctx.stroke();
+}
+
+function drawFrameTitle(layout) {
+  const ctx = resultCtx;
+  const w = layout.canvasW;
+  const h = layout.canvasH;
+
+  ctx.textAlign = "center";
+
+  if (selectedFrame === "pinkStrip") {
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 34px Arial";
+    ctx.fillText("Pink Seoul Photo", w / 2, 72);
+
+    ctx.fillStyle = "#ff4d8f";
+    ctx.font = "bold 32px Arial";
+    ctx.fillText("mood cut", w / 2, h - 90);
+    return;
+  }
+
+  ctx.fillStyle = "#23335f";
+  ctx.font = "bold 32px Arial";
+  ctx.fillText("Silver Studio", w / 2, 95);
 }
 
 function drawStickers() {
-  const ctx = resultCtx;
-
   stickers.forEach((sticker) => {
-    const x = sticker.x * resultCanvas.width;
-    const y = sticker.y * resultCanvas.height;
-    const size = sticker.size * Math.min(resultCanvas.width, resultCanvas.height);
-
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(sticker.rotation);
-    ctx.font = `${size}px Arial`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(sticker.text, 0, 0);
-    ctx.restore();
+    drawSticker(sticker);
   });
+}
+
+function drawSticker(sticker) {
+  const ctx = resultCtx;
+  const x = sticker.x * resultCanvas.width;
+  const y = sticker.y * resultCanvas.height;
+  const s = sticker.size * Math.min(resultCanvas.width, resultCanvas.height);
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(sticker.rotation);
+
+  switch (sticker.type) {
+    case "sparkle":
+      drawSparkleSticker(ctx, s);
+      break;
+    case "heartGlow":
+      drawHeartGlowSticker(ctx, s);
+      break;
+    case "swirl":
+      drawSwirlSticker(ctx, s);
+      break;
+    case "wing":
+      drawWingSticker(ctx, s);
+      break;
+    case "pixelStar":
+      drawPixelStarSticker(ctx, s);
+      break;
+    case "glow":
+      drawGlowSticker(ctx, s);
+      break;
+    case "butterfly":
+      drawButterflySticker(ctx, s);
+      break;
+    case "ribbon":
+      drawRibbonSticker(ctx, s);
+      break;
+  }
+
+  ctx.restore();
+}
+
+function drawSparkleSticker(ctx, s) {
+  ctx.shadowColor = "rgba(255,255,255,0.95)";
+  ctx.shadowBlur = 18;
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = Math.max(2, s * 0.06);
+  ctx.beginPath();
+  ctx.moveTo(0, -s * 0.55);
+  ctx.lineTo(0, s * 0.55);
+  ctx.moveTo(-s * 0.55, 0);
+  ctx.lineTo(s * 0.55, 0);
+  ctx.moveTo(-s * 0.35, -s * 0.35);
+  ctx.lineTo(s * 0.35, s * 0.35);
+  ctx.moveTo(s * 0.35, -s * 0.35);
+  ctx.lineTo(-s * 0.35, s * 0.35);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+
+function drawHeartGlowSticker(ctx, s) {
+  for (let i = 0; i < 3; i++) {
+    ctx.save();
+    ctx.translate((i - 1) * s * 0.45, i === 1 ? -s * 0.15 : s * 0.08);
+    ctx.scale(0.9 - i * 0.12, 0.9 - i * 0.12);
+    ctx.shadowColor = "rgba(255,160,220,0.95)";
+    ctx.shadowBlur = 18;
+    drawHeartPath(ctx, s * 0.45);
+    ctx.fillStyle = "rgba(255,220,245,0.96)";
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function drawSwirlSticker(ctx, s) {
+  ctx.strokeStyle = "#ffb7dc";
+  ctx.lineWidth = Math.max(3, s * 0.08);
+  ctx.lineCap = "round";
+
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.55, s * 0.1);
+  ctx.bezierCurveTo(-s * 0.2, -s * 0.4, s * 0.2, -s * 0.35, s * 0.1, -s * 0.02);
+  ctx.bezierCurveTo(0, s * 0.18, -s * 0.18, s * 0.18, -s * 0.12, 0);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(s * 0.05, s * 0.28);
+  ctx.bezierCurveTo(s * 0.35, s * 0.48, s * 0.56, s * 0.12, s * 0.34, -s * 0.04);
+  ctx.stroke();
+}
+
+function drawWingSticker(ctx, s) {
+  ctx.fillStyle = "rgba(255,255,255,0.92)";
+  ctx.strokeStyle = "rgba(210,210,210,0.9)";
+  ctx.lineWidth = 1.8;
+
+  for (let i = 0; i < 6; i++) {
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(-s * (0.3 + i * 0.06), -s * (0.15 + i * 0.05), -s * (0.65 + i * 0.06), -s * (0.05 - i * 0.04));
+    ctx.quadraticCurveTo(-s * (0.44 + i * 0.05), s * (0.02 + i * 0.02), -s * (0.08 + i * 0.02), s * (0.08 + i * 0.03));
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+}
+
+function drawPixelStarSticker(ctx, s) {
+  const color1 = "#d7f0ff";
+  const color2 = "#ffffff";
+
+  const pixels = [
+    [-2, 0], [-1, 0], [0, 0], [1, 0], [2, 0],
+    [0, -2], [0, -1], [0, 1], [0, 2],
+    [-1, -1], [1, -1], [-1, 1], [1, 1]
+  ];
+
+  const size = s * 0.12;
+
+  pixels.forEach(([px, py], idx) => {
+    ctx.fillStyle = idx % 2 === 0 ? color1 : color2;
+    ctx.fillRect(px * size, py * size, size, size);
+  });
+
+  ctx.fillStyle = "#eaf7ff";
+  for (let i = 0; i < 4; i++) {
+    ctx.fillRect((2.8 + i * 1.1) * size, (-2 + i * 0.2) * size, size * 0.8, size * 0.8);
+  }
+}
+
+function drawGlowSticker(ctx, s) {
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, s * 0.6);
+  g.addColorStop(0, "rgba(255,255,255,0.95)");
+  g.addColorStop(0.35, "rgba(255,235,255,0.75)");
+  g.addColorStop(0.65, "rgba(190,255,255,0.35)");
+  g.addColorStop(1, "rgba(255,255,255,0)");
+
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(0, 0, s * 0.65, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(-s * 0.35, s * 0.2, s * 0.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(s * 0.3, -s * 0.28, s * 0.18, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawButterflySticker(ctx, s) {
+  ctx.fillStyle = "rgba(255,220,245,0.96)";
+  ctx.strokeStyle = "rgba(255,255,255,0.95)";
+  ctx.lineWidth = 2;
+
+  ctx.beginPath();
+  ctx.ellipse(-s * 0.24, -s * 0.1, s * 0.26, s * 0.18, -0.6, 0, Math.PI * 2);
+  ctx.ellipse(-s * 0.22, s * 0.15, s * 0.22, s * 0.16, 0.5, 0, Math.PI * 2);
+  ctx.ellipse(s * 0.24, -s * 0.1, s * 0.26, s * 0.18, 0.6, 0, Math.PI * 2);
+  ctx.ellipse(s * 0.22, s * 0.15, s * 0.22, s * 0.16, -0.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.strokeStyle = "#f4a8d0";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, -s * 0.28);
+  ctx.lineTo(0, s * 0.28);
+  ctx.stroke();
+}
+
+function drawRibbonSticker(ctx, s) {
+  ctx.fillStyle = "#ffc7e5";
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 2.3;
+
+  ctx.beginPath();
+  ctx.ellipse(-s * 0.22, 0, s * 0.22, s * 0.16, -0.45, 0, Math.PI * 2);
+  ctx.ellipse(s * 0.22, 0, s * 0.22, s * 0.16, 0.45, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.06, s * 0.05);
+  ctx.lineTo(-s * 0.22, s * 0.34);
+  ctx.lineTo(0, s * 0.18);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(s * 0.06, s * 0.05);
+  ctx.lineTo(s * 0.22, s * 0.34);
+  ctx.lineTo(0, s * 0.18);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = "#ffe6f3";
+  ctx.beginPath();
+  ctx.arc(0, 0, s * 0.1, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawHeartPath(ctx, r) {
+  ctx.beginPath();
+  ctx.moveTo(0, r * 0.9);
+  ctx.bezierCurveTo(r * 1.4, 0, r * 1.1, -r * 1.1, 0, -r * 0.45);
+  ctx.bezierCurveTo(-r * 1.1, -r * 1.1, -r * 1.4, 0, 0, r * 0.9);
+}
+
+function drawBolt(x, y) {
+  const ctx = resultCtx;
+  ctx.fillStyle = "#bfc7dc";
+  ctx.beginPath();
+  ctx.arc(x, y, 14, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#8e96b3";
+  ctx.beginPath();
+  ctx.arc(x, y, 7, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawMiniTopIcon(x, y) {
+  const ctx = resultCtx;
+  ctx.strokeStyle = "#7882a4";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x - 10, y - 10, 20, 20);
+  ctx.beginPath();
+  ctx.moveTo(x - 10, y - 10);
+  ctx.lineTo(x + 10, y + 10);
+  ctx.moveTo(x + 10, y - 10);
+  ctx.lineTo(x - 10, y + 10);
+  ctx.stroke();
+}
+
+function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+  if (fill) ctx.fill();
+  if (stroke) ctx.stroke();
 }
 
 function drawImageCover(ctx, img, x, y, w, h) {
@@ -724,61 +943,6 @@ function drawImageCover(ctx, img, x, y, w, h) {
   ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
 }
 
-function drawWaveLine(x, y, length, color) {
-  const ctx = resultCtx;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 6;
-  ctx.beginPath();
-
-  for (let i = 0; i <= length; i += 12) {
-    const yy = y + Math.sin(i / 12) * 6;
-    if (i === 0) ctx.moveTo(x + i, yy);
-    else ctx.lineTo(x + i, yy);
-  }
-
-  ctx.stroke();
-}
-
-function drawSidePattern(w, h, emojis) {
-  const ctx = resultCtx;
-  ctx.font = "42px Arial";
-  ctx.textAlign = "center";
-
-  for (let y = 120; y < h - 120; y += 120) {
-    ctx.fillText(emojis[(y / 120) % emojis.length], 55, y);
-    ctx.fillText(emojis[(y / 120 + 1) % emojis.length], w - 55, y + 40);
-  }
-}
-
-function drawRepeatingEmoji(w, h, emoji, gap) {
-  const ctx = resultCtx;
-  ctx.font = "34px Arial";
-  ctx.textAlign = "center";
-
-  for (let y = 60; y < h; y += gap) {
-    for (let x = 45; x < w; x += gap * 1.4) {
-      if (Math.random() > 0.72) {
-        ctx.fillText(emoji, x, y);
-      }
-    }
-  }
-}
-
-function drawRandomStars(w, h, color1, color2) {
-  const ctx = resultCtx;
-
-  for (let i = 0; i < 60; i++) {
-    const x = Math.random() * w;
-    const y = Math.random() * h;
-    const r = Math.random() * 8 + 3;
-
-    ctx.fillStyle = i % 2 === 0 ? color1 : color2;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
 function renderControls() {
   renderButtonGroup(filterControls, filterOptions, selectedFilter, (key) => {
     selectedFilter = key;
@@ -790,11 +954,6 @@ function renderControls() {
     drawFinalPhoto();
   });
 
-  renderButtonGroup(layoutControls, layoutOptions, selectedLayout, (key) => {
-    selectedLayout = key;
-    drawFinalPhoto();
-  });
-
   renderButtonGroup(frameControls, frameOptions, selectedFrame, (key) => {
     selectedFrame = key;
     drawFinalPhoto();
@@ -802,17 +961,17 @@ function renderControls() {
 
   stickerControls.innerHTML = "";
 
-  stickerOptions.forEach((sticker) => {
+  stickerOptions.forEach((item) => {
     const btn = document.createElement("button");
-    btn.textContent = sticker;
+    btn.textContent = item.label;
 
     btn.addEventListener("click", () => {
       stickers.push({
-        text: sticker,
-        x: 0.2 + Math.random() * 0.6,
-        y: 0.2 + Math.random() * 0.6,
-        size: 0.07 + Math.random() * 0.04,
-        rotation: (Math.random() - 0.5) * 0.7
+        type: item.key,
+        x: 0.18 + Math.random() * 0.64,
+        y: 0.14 + Math.random() * 0.72,
+        size: 0.06 + Math.random() * 0.035,
+        rotation: (Math.random() - 0.5) * 0.6
       });
 
       drawFinalPhoto();
