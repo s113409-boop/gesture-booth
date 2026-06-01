@@ -128,27 +128,37 @@ async function setupHandLandmarker() {
   statusText.textContent = "手勢模型已載入，請把手放到鏡頭中央";
 }
 
+let lastDetectTime = 0;
+
 function detectLoop() {
+  requestAnimationFrame(detectLoop);
+
   if (!handLandmarker || !isCameraOn) {
     gestureText.textContent = "手勢模型或相機尚未準備好";
-    requestAnimationFrame(detectLoop);
     return;
   }
 
   if (video.readyState < 2 || video.videoWidth === 0 || video.videoHeight === 0) {
     gestureText.textContent = "相機畫面載入中...";
-    requestAnimationFrame(detectLoop);
     return;
   }
+
+  const nowTime = performance.now();
+
+  // 每 150ms 偵測一次，不要每一幀都偵測，避免當掉
+  if (nowTime - lastDetectTime < 150) {
+    return;
+  }
+
+  lastDetectTime = nowTime;
 
   let results;
 
   try {
-    results = handLandmarker.detectForVideo(video, performance.now());
+    results = handLandmarker.detectForVideo(video, nowTime);
   } catch (error) {
     console.error("手勢偵測錯誤：", error);
     gestureText.textContent = "手勢偵測錯誤，請看 Console";
-    requestAnimationFrame(detectLoop);
     return;
   }
 
@@ -178,8 +188,6 @@ function detectLoop() {
   } else {
     gestureText.textContent = "有開相機，但目前沒有偵測到手";
   }
-
-  requestAnimationFrame(detectLoop);
 }
 
 function countFingers(landmarks) {
@@ -277,7 +285,7 @@ function capturePhoto(slot) {
   ctx.restore();
 
   // 用 OpenCV.js 套濾鏡
-  applyOpenCvFilter(canvas, filters[slot - 1]);
+  //applyOpenCvFilter(canvas, filters[slot - 1]);
 
   return canvas;
 }
