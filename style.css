@@ -10,7 +10,7 @@ body {
 }
 
 .app {
-  width: min(92vw, 520px);
+  width: min(92vw, 560px);
   margin: 0 auto;
   padding: 24px 0 40px;
   text-align: center;
@@ -19,6 +19,16 @@ body {
 h1 {
   margin-bottom: 8px;
   font-size: 28px;
+}
+
+h2 {
+  margin-top: 28px;
+  margin-bottom: 12px;
+}
+
+h3 {
+  margin: 16px 0 8px;
+  font-size: 15px;
 }
 
 .subtitle {
@@ -45,6 +55,20 @@ video {
   transform: scaleX(-1);
 }
 
+.flash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 2;
+}
+
+.flash.active {
+  opacity: 0.9;
+}
+
 .countdown {
   position: absolute;
   inset: 0;
@@ -55,6 +79,7 @@ video {
   color: white;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   pointer-events: none;
+  z-index: 3;
 }
 
 #status,
@@ -64,12 +89,13 @@ video {
   line-height: 1.5;
 }
 
-.buttons {
+.buttons,
+.option-row {
   display: flex;
   gap: 10px;
   justify-content: center;
   flex-wrap: wrap;
-  margin: 16px 0 24px;
+  margin: 12px 0;
 }
 
 button {
@@ -86,9 +112,39 @@ button:hover {
   opacity: 0.85;
 }
 
+.option-row button {
+  background: #ded6ca;
+  color: #222;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.option-row button.active {
+  background: #111;
+  color: white;
+}
+
+.small-btn {
+  background: #8b8b8b;
+  padding: 9px 14px;
+  font-size: 14px;
+}
+
+.editor {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.control-group {
+  margin-bottom: 14px;
+}
+
 #resultCanvas {
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   background: white;
   border-radius: 18px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
