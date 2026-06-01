@@ -25,6 +25,9 @@ let isCapturing = false;
 let currentSlot = 1;
 let photos = [];
 
+let lastFingerCount = 0;
+let gestureStableStart = 0;
+const stableTime = 800;
 const filters = [
   "japaneseSoft",  // 第 1 格：日系清透
   "vintage",       // 第 2 格：復古底片
@@ -112,13 +115,23 @@ function detectLoop() {
 
     gestureText.textContent = `目前手勢：${fingerCount} 根手指`;
 
-    if (
-      fingerCount === currentSlot &&
-      !isCapturing &&
-      currentSlot <= 4
-    ) {
-      captureWithCountdown(currentSlot);
-    }
+const now = performance.now();
+
+if (fingerCount !== lastFingerCount) {
+  lastFingerCount = fingerCount;
+  gestureStableStart = now;
+}
+
+const isStable = now - gestureStableStart >= stableTime;
+
+if (
+  fingerCount === currentSlot &&
+  isStable &&
+  !isCapturing &&
+  currentSlot <= 4
+) {
+  captureWithCountdown(currentSlot);
+}
   } else {
     gestureText.textContent = "目前手勢：未偵測到手";
   }
@@ -129,20 +142,49 @@ function detectLoop() {
 function countFingers(landmarks) {
   let count = 0;
 
-  // 食指：指尖 8，關節 6
-  if (landmarks[8].y < landmarks[6].y) count++;
+  // 用手腕到中指根部的距離，當作手的大小基準
+  const wrist = landmarks[0];
+  const middleMcp = landmarks[9];
 
-  // 中指：指尖 12，關節 10
-  if (landmarks[12].y < landmarks[10].y) count++;
+  const handSize = distance(wrist, middleMcp);
 
-  // 無名指：指尖 16，關節 14
-  if (landmarks[16].y < landmarks[14].y) count++;
+  // 如果手太小或偵測不穩，直接回傳 0
+  if (handSize < 0.05) {
+    return 0;
+  }
 
-  // 小指：指尖 20，關節 18
-  if (landmarks[20].y < landmarks[18].y) count++;
+  // 四根手指：食指、中指、無名指、小指
+  const fingers = [
+    { tip: 8, pip: 6 },    // 食指
+    { tip: 12, pip: 10 },  // 中指
+    { tip: 16, pip: 14 },  // 無名指
+    { tip: 20, pip: 18 }   // 小指
+  ];
+
+  fingers.forEach((finger) => {
+    const tip = landmarks[finger.tip];
+    const pip = landmarks[finger.pip];
+
+    // 指尖離手腕比關節離手腕更遠，代表手指伸出
+    const tipDistance = distance(tip, wrist);
+    const pipDistance = distance(pip, wrist);
+
+    if (tipDistance > pipDistance + handSize * 0.25) {
+      count++;
+    }
+  });
 
   return count;
 }
+
+function distance(a, b) {
+  const dx = a.x - b.x;
+  const dy = a.y - b.y;
+  const dz = (a.z || 0) - (b.z || 0);
+
+  return Math.sqrt(dx * dx + dy * dy + dz * dz);
+}
+  
 
 async function captureWithCountdown(slot) {
   isCapturing = true;
