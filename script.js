@@ -27,7 +27,7 @@ let photos = [];
 
 let lastFingerCount = 0;
 let gestureStableStart = 0;
-const stableTime = 800;
+const stableTime = 300;
 const filters = [
   "japaneseSoft",  // 第 1 格：日系清透
   "vintage",       // 第 2 格：復古底片
@@ -89,6 +89,8 @@ async function setupCamera() {
 async function setupHandLandmarker() {
   if (handLandmarker) return;
 
+  statusText.textContent = "手勢模型載入中，請稍等...";
+
   const vision = await FilesetResolver.forVisionTasks(
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
   );
@@ -97,43 +99,66 @@ async function setupHandLandmarker() {
     baseOptions: {
       modelAssetPath:
         "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
-      delegate: "GPU"
+      delegate: "CPU"
     },
     runningMode: "VIDEO",
-    numHands: 1
+    numHands: 1,
+    minHandDetectionConfidence: 0.3,
+    minHandPresenceConfidence: 0.3,
+    minTrackingConfidence: 0.3
   });
+
+  statusText.textContent = "手勢模型已載入，請把手放到鏡頭中央";
 }
 
 function detectLoop() {
-  if (!handLandmarker || !isCameraOn) return;
+  if (!handLandmarker || !isCameraOn) {
+    requestAnimationFrame(detectLoop);
+    return;
+  }
 
-  const results = handLandmarker.detectForVideo(video, performance.now());
+  if (video.readyState < 2 || video.videoWidth === 0 || video.videoHeight === 0) {
+    gestureText.textContent = "相機畫面載入中...";
+    requestAnimationFrame(detectLoop);
+    return;
+  }
+
+  let results;
+
+  try {
+    results = handLandmarker.detectForVideo(video, performance.now());
+  } catch (error) {
+    console.error("手勢偵測錯誤：", error);
+    gestureText.textContent = "手勢偵測錯誤，請看 Console";
+    requestAnimationFrame(detectLoop);
+    return;
+  }
 
   if (results.landmarks && results.landmarks.length > 0) {
     const landmarks = results.landmarks[0];
     const fingerCount = countFingers(landmarks);
 
-    gestureText.textContent = `目前手勢：${fingerCount} 根手指`;
+    gestureText.textContent = `偵測到手：${fingerCount} 根手指`;
 
-const now = performance.now();
+    const now = performance.now();
 
-if (fingerCount !== lastFingerCount) {
-  lastFingerCount = fingerCount;
-  gestureStableStart = now;
-}
+    if (fingerCount !== lastFingerCount) {
+      lastFingerCount = fingerCount;
+      gestureStableStart = now;
+    }
 
-const isStable = now - gestureStableStart >= stableTime;
+    const isStable = now - gestureStableStart >= stableTime;
 
-if (
-  fingerCount === currentSlot &&
-  isStable &&
-  !isCapturing &&
-  currentSlot <= 4
-) {
-  captureWithCountdown(currentSlot);
-}
+    if (
+      fingerCount === currentSlot &&
+      isStable &&
+      !isCapturing &&
+      currentSlot <= 4
+    ) {
+      captureWithCountdown(currentSlot);
+    }
   } else {
-    gestureText.textContent = "目前手勢：未偵測到手";
+    gestureText.textContent = "有開相機，但目前沒有偵測到手";
   }
 
   requestAnimationFrame(detectLoop);
