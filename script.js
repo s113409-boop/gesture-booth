@@ -45,12 +45,30 @@ let selectedFrame = "pinkMusic";
 const frameImageCache = {};
 
 const filterOptions = {
-  original: { label: "原圖", value: "none" },
-  japanese: { label: "日系清透", value: "brightness(120%) contrast(84%) saturate(78%)" },
-  creamy: { label: "韓系奶油", value: "brightness(118%) contrast(94%) saturate(104%)" },
-  vintage: { label: "復古底片", value: "sepia(72%) brightness(108%) contrast(112%) saturate(84%)" },
-  vivid: { label: "高對比鮮豔", value: "contrast(150%) saturate(165%) brightness(104%)" },
-  blackwhite: { label: "黑白拍貼", value: "grayscale(100%) contrast(150%) brightness(106%)" }
+  original: {
+    label: "原圖",
+    value: "none"
+  },
+  japanese: {
+    label: "日系清透",
+    value: "brightness(120%) contrast(84%) saturate(78%)"
+  },
+  creamy: {
+    label: "韓系奶油",
+    value: "brightness(118%) contrast(94%) saturate(104%)"
+  },
+  vintage: {
+    label: "復古底片",
+    value: "sepia(72%) brightness(108%) contrast(112%) saturate(84%)"
+  },
+  vivid: {
+    label: "高對比鮮豔",
+    value: "contrast(150%) saturate(165%) brightness(104%)"
+  },
+  blackwhite: {
+    label: "黑白拍貼",
+    value: "grayscale(100%) contrast(150%) brightness(106%)"
+  }
 };
 
 const effectOptions = {
@@ -167,9 +185,11 @@ startBtn.addEventListener("click", async () => {
     gestureText.textContent = "準備啟動手勢偵測...";
 
     await setupCamera();
+
     statusText.textContent = "相機已開啟，正在載入手勢模型...";
 
     await setupHandLandmarker();
+
     statusText.textContent = "手勢模型已載入，請比 1 拍第 1 格";
     gestureText.textContent = "請把手放到鏡頭中央";
 
@@ -178,7 +198,7 @@ startBtn.addEventListener("click", async () => {
       requestAnimationFrame(detectLoop);
     }
   } catch (error) {
-    console.error(error);
+    console.error("啟動失敗：", error);
     statusText.textContent = `啟動失敗：${error.name || error.message}`;
     gestureText.textContent = "請確認相機權限、HTTPS 網址與網路連線";
   }
@@ -203,17 +223,24 @@ flashBtn.addEventListener("click", () => {
 });
 
 downloadBtn.addEventListener("click", async () => {
-  if (photos.length === 0) {
-    alert("請先拍照！");
+  const photoCount = photos.filter(Boolean).length;
+
+  if (photoCount < 4) {
+    alert(`目前只拍了 ${photoCount} 張，請先完成四格拍照！`);
     return;
   }
 
-  await drawFinalPhoto();
+  try {
+    await drawFinalPhoto();
 
-  const link = document.createElement("a");
-  link.download = "photobooth.png";
-  link.href = resultCanvas.toDataURL("image/png");
-  link.click();
+    const link = document.createElement("a");
+    link.download = "photobooth.png";
+    link.href = resultCanvas.toDataURL("image/png");
+    link.click();
+  } catch (error) {
+    console.error("下載失敗：", error);
+    alert("下載失敗，請檢查相框圖片是否成功載入。");
+  }
 });
 
 async function setupCamera() {
@@ -265,10 +292,17 @@ function detectLoop() {
   requestAnimationFrame(detectLoop);
 
   if (!isCameraOn || !handLandmarker) return;
-  if (video.readyState < 2 || video.videoWidth === 0 || video.videoHeight === 0) return;
+
+  if (video.readyState < 2 || video.videoWidth === 0 || video.videoHeight === 0) {
+    return;
+  }
 
   const now = performance.now();
-  if (now - lastDetectTime < detectInterval) return;
+
+  if (now - lastDetectTime < detectInterval) {
+    return;
+  }
+
   lastDetectTime = now;
 
   let results;
@@ -277,12 +311,16 @@ function detectLoop() {
     results = handLandmarker.detectForVideo(video, now);
   } catch (error) {
     console.error("detectForVideo 錯誤：", error);
+    gestureText.textContent = "手勢偵測錯誤，請重新整理網頁";
     return;
   }
 
   if (results.landmarks && results.landmarks.length > 0) {
     const fingerCount = countFingers(results.landmarks[0]);
-    gestureText.textContent = `偵測到手：${fingerCount} 根手指，目前要拍第 ${currentSlot} 格`;
+
+    gestureText.textContent =
+      `偵測到手：${fingerCount} 根手指，目前要拍第 ${currentSlot} 格`;
+
     checkGestureAndCapture(fingerCount);
   } else {
     gestureText.textContent = "模型已啟動，但目前沒有偵測到手";
@@ -339,6 +377,7 @@ function distance(a, b) {
   const dx = a.x - b.x;
   const dy = a.y - b.y;
   const dz = (a.z || 0) - (b.z || 0);
+
   return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
@@ -346,25 +385,37 @@ async function captureWithCountdown(slot) {
   isCapturing = true;
   statusText.textContent = `偵測到 ${slot} 根手指，準備拍第 ${slot} 格`;
 
-  for (let i = 3; i > 0; i--) {
-    countdownText.textContent = i;
-    await wait(700);
-  }
+  try {
+    for (let i = 3; i > 0; i--) {
+      countdownText.textContent = i;
+      await wait(700);
+    }
 
-  countdownText.textContent = "拍！";
-  await flashScreen();
+    countdownText.textContent = "拍！";
+    await flashScreen();
 
-  const photo = capturePhoto();
-  photos.push(photo);
+    const photo = capturePhoto();
 
-  countdownText.textContent = "";
-  await drawFinalPhoto();
+    photos[slot - 1] = photo;
 
-  if (currentSlot < 4) {
-    currentSlot++;
-    statusText.textContent = `第 ${slot} 格完成，請比 ${currentSlot} 拍第 ${currentSlot} 格`;
-  } else {
-    statusText.textContent = "四格拍照完成，可以開始編輯與下載！";
+    countdownText.textContent = "";
+
+    try {
+      await drawFinalPhoto();
+    } catch (error) {
+      console.error("成品預覽繪製失敗：", error);
+      statusText.textContent = "照片已拍下，但相框載入失敗，請檢查 frames 檔名";
+    }
+
+    if (currentSlot < 4) {
+      currentSlot++;
+      statusText.textContent = `第 ${slot} 格完成，請比 ${currentSlot} 拍第 ${currentSlot} 格`;
+    } else {
+      statusText.textContent = "四格拍照完成，可以開始編輯與下載！";
+    }
+  } catch (error) {
+    console.error("拍照流程錯誤：", error);
+    statusText.textContent = "拍照流程發生錯誤，請看 Console";
   }
 
   await wait(900);
@@ -424,6 +475,7 @@ function createProcessedPhoto(sourceCanvas) {
 function applyBlurEffect(canvas) {
   const copy = document.createElement("canvas");
   const copyCtx = copy.getContext("2d");
+
   copy.width = canvas.width;
   copy.height = canvas.height;
   copyCtx.drawImage(canvas, 0, 0);
@@ -439,12 +491,14 @@ function applyMosaicEffect(canvas, blockSize) {
   const ctx = canvas.getContext("2d");
   const width = canvas.width;
   const height = canvas.height;
+
   const imageData = ctx.getImageData(0, 0, width, height);
   const data = imageData.data;
 
   for (let y = 0; y < height; y += blockSize) {
     for (let x = 0; x < width; x += blockSize) {
       const index = (y * width + x) * 4;
+
       const r = data[index];
       const g = data[index + 1];
       const b = data[index + 2];
@@ -462,6 +516,7 @@ function applyConvexEffect(canvas) {
 
   const imageData = ctx.getImageData(0, 0, width, height);
   const src = imageData.data;
+
   const output = ctx.createImageData(width, height);
   const dst = output.data;
 
@@ -504,21 +559,57 @@ async function loadImage(src) {
 
   return new Promise((resolve, reject) => {
     const img = new Image();
+
     img.onload = () => {
       frameImageCache[src] = img;
       resolve(img);
     };
-    img.onerror = reject;
+
+    img.onerror = () => {
+      reject(new Error(`圖片載入失敗：${src}`));
+    };
+
     img.src = src;
   });
 }
 
 async function drawFinalPhoto() {
   const frame = frameOptions[selectedFrame];
-  const frameImg = await loadImage(frame.src);
 
-  const canvasW = frameImg.naturalWidth || 1080;
-  const canvasH = frameImg.naturalHeight || 1920;
+  let frameImg;
+
+  try {
+    frameImg = await loadImage(frame.src);
+  } catch (error) {
+    console.error(error);
+
+    resultCanvas.width = 1080;
+    resultCanvas.height = 1920;
+
+    resultCtx.fillStyle = "#ffffff";
+    resultCtx.fillRect(0, 0, resultCanvas.width, resultCanvas.height);
+
+    resultCtx.fillStyle = "#111";
+    resultCtx.font = "42px Arial";
+    resultCtx.textAlign = "center";
+    resultCtx.fillText(
+      "相框載入失敗",
+      resultCanvas.width / 2,
+      resultCanvas.height / 2 - 30
+    );
+
+    resultCtx.font = "28px Arial";
+    resultCtx.fillText(
+      frame.src,
+      resultCanvas.width / 2,
+      resultCanvas.height / 2 + 30
+    );
+
+    throw error;
+  }
+
+  const canvasW = frameImg.naturalWidth || frameImg.width || 1080;
+  const canvasH = frameImg.naturalHeight || frameImg.height || 1920;
 
   resultCanvas.width = canvasW;
   resultCanvas.height = canvasH;
@@ -549,7 +640,10 @@ function drawImageCover(ctx, img, x, y, w, h) {
   const imgRatio = img.width / img.height;
   const boxRatio = w / h;
 
-  let sx, sy, sw, sh;
+  let sx;
+  let sy;
+  let sw;
+  let sh;
 
   if (imgRatio > boxRatio) {
     sh = img.height;
@@ -569,17 +663,26 @@ function drawImageCover(ctx, img, x, y, w, h) {
 function renderControls() {
   renderButtonGroup(filterControls, filterOptions, selectedFilter, async (key) => {
     selectedFilter = key;
-    if (photos.length > 0) await drawFinalPhoto();
+    if (photos.filter(Boolean).length > 0) {
+      await drawFinalPhoto();
+    }
   });
 
   renderButtonGroup(effectControls, effectOptions, selectedEffect, async (key) => {
     selectedEffect = key;
-    if (photos.length > 0) await drawFinalPhoto();
+    if (photos.filter(Boolean).length > 0) {
+      await drawFinalPhoto();
+    }
   });
 
   renderButtonGroup(frameControls, frameOptions, selectedFrame, async (key) => {
     selectedFrame = key;
-    await drawFinalPhoto();
+    try {
+      await drawFinalPhoto();
+    } catch (error) {
+      console.error("切換相框失敗：", error);
+      statusText.textContent = "切換相框失敗，請檢查 frames 檔案";
+    }
   });
 }
 
@@ -608,4 +711,8 @@ function wait(ms) {
 }
 
 renderControls();
-drawFinalPhoto();
+
+drawFinalPhoto().catch((error) => {
+  console.error("初始相框載入失敗：", error);
+  statusText.textContent = "初始相框載入失敗，請檢查 frames/pink-music.png";
+});
