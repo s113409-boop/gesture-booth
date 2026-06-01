@@ -1,41 +1,54 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   font-family: Arial, "Noto Sans TC", sans-serif;
   background: #d8d8d8;
-  color: #222;
+  color: #202020;
 }
 
 .app {
-  width: min(92vw, 580px);
+  width: min(92vw, 620px);
   margin: 0 auto;
-  padding: 24px 0 40px;
+  padding: 26px 0 46px;
   text-align: center;
 }
 
+.hero {
+  padding: 12px 10px 18px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: #666;
+  font-weight: 700;
+}
+
 h1 {
-  margin-bottom: 8px;
-  font-size: 28px;
+  margin: 0 0 8px;
+  font-size: 30px;
+  letter-spacing: -0.03em;
 }
 
 h2 {
-  margin-top: 28px;
-  margin-bottom: 12px;
+  margin: 26px 0 12px;
+  font-size: 22px;
 }
 
 h3 {
-  margin: 16px 0 8px;
+  margin: 18px 0 9px;
   font-size: 15px;
+  color: #333;
 }
 
 .subtitle {
-  margin-top: 0;
+  margin: 0 auto;
+  max-width: 520px;
   color: #555;
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .camera-card {
@@ -43,9 +56,10 @@ h3 {
   width: 100%;
   aspect-ratio: 3 / 4;
   background: #111;
-  border-radius: 24px;
+  border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255,255,255,0.35);
 }
 
 video {
@@ -65,32 +79,31 @@ video {
   z-index: 2;
 }
 
-.flash.active {
-  opacity: 0.92;
-}
+.flash.active { opacity: 0.92; }
 
 .countdown {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  font-size: 90px;
-  font-weight: bold;
+  font-size: 94px;
+  font-weight: 900;
   color: white;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 4px 22px rgba(0, 0, 0, 0.75);
   pointer-events: none;
   z-index: 3;
 }
 
-#status,
-#gestureText {
+.status,
+.gesture {
   margin: 12px 0;
   font-size: 16px;
   line-height: 1.5;
 }
 
 .buttons,
-.option-row {
+.option-row,
+.sub-buttons {
   display: flex;
   gap: 10px;
   justify-content: center;
@@ -106,10 +119,12 @@ button {
   color: white;
   font-size: 15px;
   cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease, background 0.12s ease;
 }
 
 button:hover {
-  opacity: 0.85;
+  opacity: 0.88;
+  transform: translateY(-1px);
 }
 
 .option-row button {
@@ -117,6 +132,10 @@ button:hover {
   color: #222;
   padding: 10px 14px;
   font-size: 14px;
+}
+
+.frame-options button {
+  min-width: 132px;
 }
 
 .option-row button.active {
@@ -130,22 +149,29 @@ button:hover {
   font-size: 14px;
 }
 
-.editor {
-  margin-top: 20px;
+.editor,
+.preview {
+  margin-top: 22px;
   padding: 16px;
-  border-radius: 24px;
+  border-radius: 28px;
   background: #eeeeee;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255,255,255,0.6);
 }
 
-.control-group {
-  margin-bottom: 14px;
+.control-group { margin-bottom: 14px; }
+
+.hint {
+  margin: 8px 0 0;
+  color: #666;
+  font-size: 13px;
 }
 
 #resultCanvas {
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
   background: white;
-  border-radius: 18px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+  border-radius: 20px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
+  touch-action: none;
 }
