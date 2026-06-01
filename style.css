@@ -1,54 +1,63 @@
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #d8d8d8;
+  --panel: #eeeeee;
+  --text: #222;
+  --muted: #555;
+  --button: #3a3a3a;
+  --button-active: #4a4a4a;
+  --option: #cfcfcf;
+  --shadow: rgba(0, 0, 0, 0.14);
+}
 
 body {
   margin: 0;
   font-family: Arial, "Noto Sans TC", sans-serif;
-  background: #d8d8d8;
-  color: #202020;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .app {
   width: min(92vw, 620px);
   margin: 0 auto;
-  padding: 26px 0 46px;
+  padding: 24px 0 40px;
   text-align: center;
 }
 
 .hero {
-  padding: 12px 10px 18px;
+  margin-bottom: 16px;
 }
 
 .eyebrow {
   margin: 0 0 6px;
   font-size: 12px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   color: #666;
-  font-weight: 700;
 }
 
 h1 {
   margin: 0 0 8px;
-  font-size: 30px;
-  letter-spacing: -0.03em;
+  font-size: 28px;
 }
 
 h2 {
-  margin: 26px 0 12px;
-  font-size: 22px;
+  margin-top: 28px;
+  margin-bottom: 12px;
 }
 
 h3 {
-  margin: 18px 0 9px;
+  margin: 16px 0 8px;
   font-size: 15px;
-  color: #333;
 }
 
 .subtitle {
-  margin: 0 auto;
-  max-width: 520px;
-  color: #555;
+  margin-top: 0;
+  color: var(--muted);
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.6;
 }
 
 .camera-card {
@@ -56,10 +65,9 @@ h3 {
   width: 100%;
   aspect-ratio: 3 / 4;
   background: #111;
-  border-radius: 28px;
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
 }
 
 video {
@@ -79,17 +87,19 @@ video {
   z-index: 2;
 }
 
-.flash.active { opacity: 0.92; }
+.flash.active {
+  opacity: 0.92;
+}
 
 .countdown {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  font-size: 94px;
-  font-weight: 900;
+  font-size: 90px;
+  font-weight: bold;
   color: white;
-  text-shadow: 0 4px 22px rgba(0, 0, 0, 0.75);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   pointer-events: none;
   z-index: 3;
 }
@@ -102,8 +112,7 @@ video {
 }
 
 .buttons,
-.option-row,
-.sub-buttons {
+.option-row {
   display: flex;
   gap: 10px;
   justify-content: center;
@@ -115,63 +124,48 @@ button {
   border: none;
   border-radius: 999px;
   padding: 12px 18px;
-  background: #3a3a3a;
+  background: var(--button);
   color: white;
   font-size: 15px;
   cursor: pointer;
-  transition: transform 0.12s ease, opacity 0.12s ease, background 0.12s ease;
 }
 
 button:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
+  opacity: 0.85;
 }
 
 .option-row button {
-  background: #cfcfcf;
+  background: var(--option);
   color: #222;
   padding: 10px 14px;
   font-size: 14px;
 }
 
-.frame-options button {
-  min-width: 132px;
-}
-
 .option-row button.active {
-  background: #4a4a4a;
+  background: var(--button-active);
   color: white;
 }
 
-.small-btn {
-  background: #777;
-  padding: 9px 14px;
-  font-size: 14px;
-}
-
-.editor,
-.preview {
-  margin-top: 22px;
+.editor {
+  margin-top: 20px;
   padding: 16px;
-  border-radius: 28px;
-  background: #eeeeee;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 24px;
+  background: var(--panel);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-.control-group { margin-bottom: 14px; }
+.control-group {
+  margin-bottom: 14px;
+}
 
-.hint {
-  margin: 8px 0 0;
-  color: #666;
-  font-size: 13px;
+.preview {
+  margin-top: 18px;
 }
 
 #resultCanvas {
   width: 100%;
   max-width: 520px;
   background: white;
-  border-radius: 20px;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
-  touch-action: none;
+  border-radius: 18px;
+  box-shadow: 0 10px 24px var(--shadow);
 }
