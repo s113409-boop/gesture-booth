@@ -40,7 +40,7 @@ let flashEnabled = true;
 
 let selectedFilter = "original";
 let selectedEffect = "none";
-let selectedFrame = "pinkMusic";
+let selectedFrame = "flashNight";
 
 const frameImageCache = {};
 
@@ -81,100 +81,100 @@ const effectOptions = {
 const frameOptions = {
   pinkMusic: {
     label: "粉紅 Music",
-    src: "frames/pink-music.png",
+    src: "/frames/pink-music.png",
     boxes: [
-      { x: 0.15, y: 0.055, w: 0.70, h: 0.165 },
-      { x: 0.15, y: 0.275, w: 0.70, h: 0.165 },
-      { x: 0.15, y: 0.495, w: 0.70, h: 0.165 },
-      { x: 0.15, y: 0.715, w: 0.70, h: 0.165 }
+      { x: 0.145, y: 0.060, w: 0.710, h: 0.165 },
+      { x: 0.145, y: 0.280, w: 0.710, h: 0.165 },
+      { x: 0.145, y: 0.500, w: 0.710, h: 0.165 },
+      { x: 0.145, y: 0.720, w: 0.710, h: 0.165 }
     ]
   },
 
   whiteSeoul: {
     label: "白色 Seoul",
-    src: "frames/white-seoul.png",
+    src: "/frames/white-seoul.png",
     boxes: [
-      { x: 0.17, y: 0.055, w: 0.66, h: 0.165 },
-      { x: 0.17, y: 0.280, w: 0.66, h: 0.165 },
-      { x: 0.17, y: 0.505, w: 0.66, h: 0.165 },
-      { x: 0.17, y: 0.730, w: 0.66, h: 0.165 }
+      { x: 0.170, y: 0.058, w: 0.660, h: 0.165 },
+      { x: 0.170, y: 0.282, w: 0.660, h: 0.165 },
+      { x: 0.170, y: 0.506, w: 0.660, h: 0.165 },
+      { x: 0.170, y: 0.730, w: 0.660, h: 0.165 }
     ]
   },
 
   angelWing: {
     label: "天使羽翼",
-    src: "frames/angel-wing.png",
+    src: "/frames/angel-wing.png",
     boxes: [
-      { x: 0.18, y: 0.050, w: 0.64, h: 0.165 },
-      { x: 0.18, y: 0.275, w: 0.64, h: 0.165 },
-      { x: 0.18, y: 0.500, w: 0.64, h: 0.165 },
-      { x: 0.18, y: 0.725, w: 0.64, h: 0.165 }
+      { x: 0.180, y: 0.052, w: 0.640, h: 0.165 },
+      { x: 0.180, y: 0.277, w: 0.640, h: 0.165 },
+      { x: 0.180, y: 0.502, w: 0.640, h: 0.165 },
+      { x: 0.180, y: 0.727, w: 0.640, h: 0.165 }
     ]
   },
 
   pinkHeart: {
     label: "粉光愛心",
-    src: "frames/pink-heart.png",
+    src: "/frames/pink-heart.png",
     boxes: [
-      { x: 0.18, y: 0.060, w: 0.64, h: 0.160 },
-      { x: 0.18, y: 0.285, w: 0.64, h: 0.160 },
-      { x: 0.18, y: 0.510, w: 0.64, h: 0.160 },
-      { x: 0.18, y: 0.735, w: 0.64, h: 0.160 }
+      { x: 0.180, y: 0.060, w: 0.640, h: 0.160 },
+      { x: 0.180, y: 0.285, w: 0.640, h: 0.160 },
+      { x: 0.180, y: 0.510, w: 0.640, h: 0.160 },
+      { x: 0.180, y: 0.735, w: 0.640, h: 0.160 }
     ]
   },
 
   fullBlack: {
     label: "全黑 Y2K",
-    src: "frames/full-black.png",
+    src: "/frames/full-black.png",
     boxes: [
-      { x: 0.19, y: 0.075, w: 0.62, h: 0.155 },
-      { x: 0.19, y: 0.300, w: 0.62, h: 0.155 },
-      { x: 0.19, y: 0.525, w: 0.62, h: 0.155 },
-      { x: 0.19, y: 0.750, w: 0.62, h: 0.155 }
+      { x: 0.190, y: 0.075, w: 0.620, h: 0.155 },
+      { x: 0.190, y: 0.300, w: 0.620, h: 0.155 },
+      { x: 0.190, y: 0.525, w: 0.620, h: 0.155 },
+      { x: 0.190, y: 0.750, w: 0.620, h: 0.155 }
     ]
   },
 
   blackDigital: {
     label: "黑灰 Y2K",
-    src: "frames/black-digital.png",
+    src: "/frames/black-digital.png",
     boxes: [
-      { x: 0.12, y: 0.115, w: 0.37, h: 0.295 },
-      { x: 0.51, y: 0.115, w: 0.37, h: 0.295 },
-      { x: 0.12, y: 0.440, w: 0.37, h: 0.295 },
-      { x: 0.51, y: 0.440, w: 0.37, h: 0.295 }
+      { x: 0.135, y: 0.135, w: 0.350, h: 0.270 },
+      { x: 0.515, y: 0.135, w: 0.350, h: 0.270 },
+      { x: 0.135, y: 0.455, w: 0.350, h: 0.270 },
+      { x: 0.515, y: 0.455, w: 0.350, h: 0.270 }
     ]
   },
 
   flashNight: {
     label: "Flash Night",
-    src: "frames/flash-night.png",
+    src: "/frames/flash-night.png",
     boxes: [
-      { x: 0.13, y: 0.108, w: 0.36, h: 0.295 },
-      { x: 0.52, y: 0.108, w: 0.36, h: 0.295 },
-      { x: 0.13, y: 0.438, w: 0.36, h: 0.295 },
-      { x: 0.52, y: 0.438, w: 0.36, h: 0.295 }
+      { x: 0.145, y: 0.145, w: 0.335, h: 0.255 },
+      { x: 0.520, y: 0.145, w: 0.335, h: 0.255 },
+      { x: 0.145, y: 0.455, w: 0.335, h: 0.255 },
+      { x: 0.520, y: 0.455, w: 0.335, h: 0.255 }
     ]
   },
 
   pixelStar: {
     label: "Pixel Star",
-    src: "frames/pixel-star.png",
+    src: "/frames/pixel-star.png",
     boxes: [
-      { x: 0.13, y: 0.110, w: 0.35, h: 0.310 },
-      { x: 0.52, y: 0.110, w: 0.35, h: 0.310 },
-      { x: 0.13, y: 0.470, w: 0.35, h: 0.310 },
-      { x: 0.52, y: 0.470, w: 0.35, h: 0.310 }
+      { x: 0.130, y: 0.115, w: 0.350, h: 0.300 },
+      { x: 0.520, y: 0.115, w: 0.350, h: 0.300 },
+      { x: 0.130, y: 0.465, w: 0.350, h: 0.300 },
+      { x: 0.520, y: 0.465, w: 0.350, h: 0.300 }
     ]
   },
 
   silverMeta: {
     label: "銀色金屬",
-    src: "frames/silver-meta.png",
+    src: "/frames/silver-meta.png",
     boxes: [
-      { x: 0.10, y: 0.120, w: 0.35, h: 0.240 },
-      { x: 0.55, y: 0.120, w: 0.35, h: 0.240 },
-      { x: 0.10, y: 0.430, w: 0.35, h: 0.240 },
-      { x: 0.55, y: 0.430, w: 0.35, h: 0.240 }
+      { x: 0.100, y: 0.125, w: 0.350, h: 0.240 },
+      { x: 0.550, y: 0.125, w: 0.350, h: 0.240 },
+      { x: 0.100, y: 0.435, w: 0.350, h: 0.240 },
+      { x: 0.550, y: 0.435, w: 0.350, h: 0.240 }
     ]
   }
 };
@@ -615,8 +615,6 @@ async function drawFinalPhoto() {
   resultCanvas.height = canvasH;
 
   resultCtx.clearRect(0, 0, canvasW, canvasH);
-  resultCtx.fillStyle = "#ffffff";
-  resultCtx.fillRect(0, 0, canvasW, canvasH);
 
   frame.boxes.forEach((box, index) => {
     const x = box.x * canvasW;
@@ -627,9 +625,6 @@ async function drawFinalPhoto() {
     if (photos[index]) {
       const processed = createProcessedPhoto(photos[index]);
       drawImageCover(resultCtx, processed, x, y, w, h);
-    } else {
-      resultCtx.fillStyle = "#f2f2f2";
-      resultCtx.fillRect(x, y, w, h);
     }
   });
 
@@ -663,6 +658,7 @@ function drawImageCover(ctx, img, x, y, w, h) {
 function renderControls() {
   renderButtonGroup(filterControls, filterOptions, selectedFilter, async (key) => {
     selectedFilter = key;
+
     if (photos.filter(Boolean).length > 0) {
       await drawFinalPhoto();
     }
@@ -670,6 +666,7 @@ function renderControls() {
 
   renderButtonGroup(effectControls, effectOptions, selectedEffect, async (key) => {
     selectedEffect = key;
+
     if (photos.filter(Boolean).length > 0) {
       await drawFinalPhoto();
     }
@@ -677,6 +674,7 @@ function renderControls() {
 
   renderButtonGroup(frameControls, frameOptions, selectedFrame, async (key) => {
     selectedFrame = key;
+
     try {
       await drawFinalPhoto();
     } catch (error) {
@@ -714,5 +712,5 @@ renderControls();
 
 drawFinalPhoto().catch((error) => {
   console.error("初始相框載入失敗：", error);
-  statusText.textContent = "初始相框載入失敗，請檢查 frames/pink-music.png";
+  statusText.textContent = "初始相框載入失敗，請檢查 frames 檔案";
 });
