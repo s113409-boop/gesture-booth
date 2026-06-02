@@ -27,9 +27,7 @@ body {
   text-align: center;
 }
 
-.hero {
-  margin-bottom: 16px;
-}
+.hero { margin-bottom: 16px; }
 
 .eyebrow {
   margin: 0 0 6px;
@@ -38,20 +36,9 @@ body {
   color: #666;
 }
 
-h1 {
-  margin: 0 0 8px;
-  font-size: 28px;
-}
-
-h2 {
-  margin-top: 28px;
-  margin-bottom: 12px;
-}
-
-h3 {
-  margin: 16px 0 8px;
-  font-size: 15px;
-}
+h1 { margin: 0 0 8px; font-size: 28px; }
+h2 { margin-top: 28px; margin-bottom: 12px; }
+h3 { margin: 16px 0 8px; font-size: 15px; }
 
 .subtitle {
   margin-top: 0;
@@ -86,10 +73,7 @@ video {
   transition: opacity 0.15s ease;
   z-index: 2;
 }
-
-.flash.active {
-  opacity: 0.92;
-}
+.flash.active { opacity: 0.92; }
 
 .countdown {
   position: absolute;
@@ -129,10 +113,7 @@ button {
   font-size: 15px;
   cursor: pointer;
 }
-
-button:hover {
-  opacity: 0.85;
-}
+button:hover { opacity: 0.85; }
 
 .option-row button {
   background: var(--option);
@@ -140,7 +121,6 @@ button:hover {
   padding: 10px 14px;
   font-size: 14px;
 }
-
 .option-row button.active {
   background: var(--button-active);
   color: white;
@@ -154,13 +134,8 @@ button:hover {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-.control-group {
-  margin-bottom: 14px;
-}
-
-.preview {
-  margin-top: 18px;
-}
+.control-group { margin-bottom: 14px; }
+.preview { margin-top: 18px; }
 
 #resultCanvas {
   width: 100%;
