@@ -43,6 +43,7 @@ let selectedEffect = "none";
 let selectedFrame = "flashNight";
 
 const frameImageCache = {};
+const punchedFrameCache = {};
 
 const filterOptions = {
   original: {
@@ -83,10 +84,10 @@ const frameOptions = {
     label: "粉紅 Music",
     src: "/frames/pink-music.png",
     boxes: [
-      { x: 0.145, y: 0.060, w: 0.710, h: 0.165 },
-      { x: 0.145, y: 0.280, w: 0.710, h: 0.165 },
-      { x: 0.145, y: 0.500, w: 0.710, h: 0.165 },
-      { x: 0.145, y: 0.720, w: 0.710, h: 0.165 }
+      { x: 0.273, y: 0.054, w: 0.452, h: 0.196 },
+      { x: 0.273, y: 0.276, w: 0.452, h: 0.197 },
+      { x: 0.274, y: 0.499, w: 0.451, h: 0.196 },
+      { x: 0.274, y: 0.721, w: 0.452, h: 0.195 }
     ]
   },
 
@@ -94,10 +95,10 @@ const frameOptions = {
     label: "白色 Seoul",
     src: "/frames/white-seoul.png",
     boxes: [
-      { x: 0.170, y: 0.058, w: 0.660, h: 0.165 },
-      { x: 0.170, y: 0.282, w: 0.660, h: 0.165 },
-      { x: 0.170, y: 0.506, w: 0.660, h: 0.165 },
-      { x: 0.170, y: 0.730, w: 0.660, h: 0.165 }
+      { x: 0.247, y: 0.060, w: 0.570, h: 0.182 },
+      { x: 0.198, y: 0.264, w: 0.618, h: 0.185 },
+      { x: 0.200, y: 0.471, w: 0.616, h: 0.185 },
+      { x: 0.247, y: 0.678, w: 0.570, h: 0.185 }
     ]
   },
 
@@ -105,10 +106,10 @@ const frameOptions = {
     label: "天使羽翼",
     src: "/frames/angel-wing.png",
     boxes: [
-      { x: 0.180, y: 0.052, w: 0.640, h: 0.165 },
-      { x: 0.180, y: 0.277, w: 0.640, h: 0.165 },
-      { x: 0.180, y: 0.502, w: 0.640, h: 0.165 },
-      { x: 0.180, y: 0.727, w: 0.640, h: 0.165 }
+      { x: 0.183, y: 0.076, w: 0.633, h: 0.189 },
+      { x: 0.183, y: 0.271, w: 0.632, h: 0.190 },
+      { x: 0.184, y: 0.467, w: 0.631, h: 0.176 },
+      { x: 0.183, y: 0.661, w: 0.632, h: 0.227 }
     ]
   },
 
@@ -116,10 +117,10 @@ const frameOptions = {
     label: "粉光愛心",
     src: "/frames/pink-heart.png",
     boxes: [
-      { x: 0.180, y: 0.060, w: 0.640, h: 0.160 },
-      { x: 0.180, y: 0.285, w: 0.640, h: 0.160 },
-      { x: 0.180, y: 0.510, w: 0.640, h: 0.160 },
-      { x: 0.180, y: 0.735, w: 0.640, h: 0.160 }
+      { x: 0.303, y: 0.059, w: 0.396, h: 0.172 },
+      { x: 0.299, y: 0.261, w: 0.405, h: 0.178 },
+      { x: 0.299, y: 0.468, w: 0.405, h: 0.175 },
+      { x: 0.301, y: 0.676, w: 0.399, h: 0.204 }
     ]
   },
 
@@ -127,10 +128,10 @@ const frameOptions = {
     label: "全黑 Y2K",
     src: "/frames/full-black.png",
     boxes: [
-      { x: 0.190, y: 0.075, w: 0.620, h: 0.155 },
-      { x: 0.190, y: 0.300, w: 0.620, h: 0.155 },
-      { x: 0.190, y: 0.525, w: 0.620, h: 0.155 },
-      { x: 0.190, y: 0.750, w: 0.620, h: 0.155 }
+      { x: 0.240, y: 0.106, w: 0.525, h: 0.178 },
+      { x: 0.239, y: 0.306, w: 0.518, h: 0.175 },
+      { x: 0.239, y: 0.503, w: 0.519, h: 0.175 },
+      { x: 0.240, y: 0.700, w: 0.516, h: 0.173 }
     ]
   },
 
@@ -138,10 +139,10 @@ const frameOptions = {
     label: "黑灰 Y2K",
     src: "/frames/black-digital.png",
     boxes: [
-      { x: 0.135, y: 0.135, w: 0.350, h: 0.270 },
-      { x: 0.515, y: 0.135, w: 0.350, h: 0.270 },
-      { x: 0.135, y: 0.455, w: 0.350, h: 0.270 },
-      { x: 0.515, y: 0.455, w: 0.350, h: 0.270 }
+      { x: 0.138, y: 0.154, w: 0.345, h: 0.330 },
+      { x: 0.515, y: 0.154, w: 0.348, h: 0.330 },
+      { x: 0.139, y: 0.503, w: 0.344, h: 0.333 },
+      { x: 0.515, y: 0.504, w: 0.346, h: 0.332 }
     ]
   },
 
@@ -149,10 +150,10 @@ const frameOptions = {
     label: "Flash Night",
     src: "/frames/flash-night.png",
     boxes: [
-      { x: 0.105, y: 0.155, w: 0.365, h: 0.315 },
-      { x: 0.525, y: 0.155, w: 0.365, h: 0.315 },
-      { x: 0.105, y: 0.515, w: 0.365, h: 0.315 },
-      { x: 0.525, y: 0.515, w: 0.365, h: 0.315 }
+      { x: 0.147, y: 0.156, w: 0.332, h: 0.336 },
+      { x: 0.522, y: 0.155, w: 0.332, h: 0.336 },
+      { x: 0.147, y: 0.516, w: 0.332, h: 0.339 },
+      { x: 0.522, y: 0.516, w: 0.332, h: 0.339 }
     ]
   },
 
@@ -160,21 +161,23 @@ const frameOptions = {
     label: "Pixel Star",
     src: "/frames/pixel-star.png",
     boxes: [
-      { x: 0.130, y: 0.115, w: 0.350, h: 0.300 },
-      { x: 0.520, y: 0.115, w: 0.350, h: 0.300 },
-      { x: 0.130, y: 0.465, w: 0.350, h: 0.300 },
-      { x: 0.520, y: 0.465, w: 0.350, h: 0.300 }
+      { x: 0.125, y: 0.153, w: 0.349, h: 0.321 },
+      { x: 0.527, y: 0.153, w: 0.344, h: 0.322 },
+      { x: 0.126, y: 0.514, w: 0.346, h: 0.315 },
+      { x: 0.528, y: 0.520, w: 0.343, h: 0.310 }
     ]
   },
 
   silverMeta: {
     label: "銀色金屬",
     src: "/frames/silver-meta.png",
+    clipShape: "ellipse",
+    background: "#000000",
     boxes: [
-      { x: 0.100, y: 0.125, w: 0.350, h: 0.240 },
-      { x: 0.550, y: 0.125, w: 0.350, h: 0.240 },
-      { x: 0.100, y: 0.435, w: 0.350, h: 0.240 },
-      { x: 0.550, y: 0.435, w: 0.350, h: 0.240 }
+      { cx: 0.289, cy: 0.339, rx: 0.188, ry: 0.123 },
+      { cx: 0.714, cy: 0.339, rx: 0.188, ry: 0.123 },
+      { cx: 0.289, cy: 0.636, rx: 0.187, ry: 0.123 },
+      { cx: 0.712, cy: 0.636, rx: 0.189, ry: 0.123 }
     ]
   }
 };
@@ -616,30 +619,191 @@ async function drawFinalPhoto() {
 
   resultCtx.clearRect(0, 0, canvasW, canvasH);
 
-  // 先畫相框，避免相框透明區有殘留白底時蓋住照片
-  resultCtx.drawImage(frameImg, 0, 0, canvasW, canvasH);
+  if (frame.background) {
+    resultCtx.fillStyle = frame.background;
+    resultCtx.fillRect(0, 0, canvasW, canvasH);
+  }
 
-  // 再把照片畫進每個洞裡
-  frame.boxes.forEach((box, index) => {
-    const x = box.x * canvasW;
-    const y = box.y * canvasH;
-    const w = box.w * canvasW;
-    const h = box.h * canvasH;
+  drawPhotosIntoFrame(frame, canvasW, canvasH);
 
-    if (photos[index]) {
-      const processed = createProcessedPhoto(photos[index]);
+  const frameLayer = buildFrameWithPunchedHoles(frameImg, frame, canvasW, canvasH);
+  resultCtx.drawImage(frameLayer, 0, 0, canvasW, canvasH);
+}
 
-      resultCtx.save();
+function isHolePixel(r, g, b, a) {
+  if (a < 20) {
+    return true;
+  }
 
-      const radius = Math.min(w, h) * 0.035;
-      roundRectPath(resultCtx, x, y, w, h, radius);
-      resultCtx.clip();
+  if (a < 245) {
+    return true;
+  }
 
-      drawImageCover(resultCtx, processed, x, y, w, h);
+  const avg = (r + g + b) / 3;
+  const spread = Math.max(r, g, b) - Math.min(r, g, b);
 
-      resultCtx.restore();
+  if (avg > 236 && spread < 18) {
+    return true;
+  }
+
+  if (r > 232 && g > 145 && g < 230 && b > 165 && b < 250) {
+    return true;
+  }
+
+  return false;
+}
+
+function isInsideBox(x, y, rect, clipShape) {
+  if (clipShape === "ellipse") {
+    const dx = (x - rect.cx) / rect.rx;
+    const dy = (y - rect.cy) / rect.ry;
+    return dx * dx + dy * dy <= 1;
+  }
+
+  return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
+}
+
+function buildFrameWithPunchedHoles(frameImg, frame, canvasW, canvasH) {
+  const cacheKey = `${frame.src}_${canvasW}x${canvasH}`;
+
+  if (punchedFrameCache[cacheKey]) {
+    return punchedFrameCache[cacheKey];
+  }
+
+  const temp = document.createElement("canvas");
+  temp.width = canvasW;
+  temp.height = canvasH;
+  const tempCtx = temp.getContext("2d");
+  tempCtx.drawImage(frameImg, 0, 0, canvasW, canvasH);
+
+  const imageData = tempCtx.getImageData(0, 0, canvasW, canvasH);
+  const data = imageData.data;
+
+  frame.boxes.forEach((box) => {
+    const clipShape = box.shape || frame.clipShape || "rect";
+    const rect = getBoxMetrics(box, canvasW, canvasH);
+    const x0 = Math.max(0, Math.floor(rect.x));
+    const y0 = Math.max(0, Math.floor(rect.y));
+    const x1 = Math.min(canvasW - 1, Math.ceil(rect.x + rect.w));
+    const y1 = Math.min(canvasH - 1, Math.ceil(rect.y + rect.h));
+
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        if (!isInsideBox(x, y, rect, clipShape)) {
+          continue;
+        }
+
+        const index = (y * canvasW + x) * 4;
+        const r = data[index];
+        const g = data[index + 1];
+        const b = data[index + 2];
+        const a = data[index + 3];
+
+        if (isHolePixel(r, g, b, a)) {
+          data[index + 3] = 0;
+        }
+      }
     }
   });
+
+  tempCtx.putImageData(imageData, 0, 0);
+  punchedFrameCache[cacheKey] = temp;
+  return temp;
+}
+
+function drawPhotosIntoFrame(frame, canvasW, canvasH) {
+  frame.boxes.forEach((box, index) => {
+    if (!photos[index]) return;
+
+    const processed = createProcessedPhoto(photos[index]);
+    const clipShape = box.shape || frame.clipShape || "rect";
+    const rect = getBoxMetrics(box, canvasW, canvasH);
+
+    if (clipShape === "ellipse") {
+      drawPhotoInEllipse(resultCtx, processed, rect.cx, rect.cy, rect.rx, rect.ry);
+      return;
+    }
+
+    const radius = Math.min(rect.w, rect.h) * 0.035;
+    drawPhotoInRect(resultCtx, processed, rect.x, rect.y, rect.w, rect.h, radius);
+  });
+}
+
+function getBoxMetrics(box, canvasW, canvasH) {
+  if (box.cx != null) {
+    const rx = box.rx * canvasW;
+    const ry = box.ry * canvasH;
+    const cx = box.cx * canvasW;
+    const cy = box.cy * canvasH;
+
+    return {
+      cx,
+      cy,
+      rx,
+      ry,
+      x: cx - rx,
+      y: cy - ry,
+      w: rx * 2,
+      h: ry * 2
+    };
+  }
+
+  const x = box.x * canvasW;
+  const y = box.y * canvasH;
+  const w = box.w * canvasW;
+  const h = box.h * canvasH;
+
+  return {
+    x,
+    y,
+    w,
+    h,
+    cx: x + w / 2,
+    cy: y + h / 2,
+    rx: w / 2,
+    ry: h / 2
+  };
+}
+
+function drawPhotoInRect(ctx, img, x, y, w, h, radius) {
+  const iw = Math.max(1, Math.round(w));
+  const ih = Math.max(1, Math.round(h));
+
+  const temp = document.createElement("canvas");
+  temp.width = iw;
+  temp.height = ih;
+  const tempCtx = temp.getContext("2d");
+
+  drawImageCover(tempCtx, img, 0, 0, iw, ih);
+
+  tempCtx.globalCompositeOperation = "destination-in";
+  roundRectPath(tempCtx, 0, 0, iw, ih, radius);
+  tempCtx.fillStyle = "#000";
+  tempCtx.fill();
+  tempCtx.globalCompositeOperation = "source-over";
+
+  ctx.drawImage(temp, x, y, w, h);
+}
+
+function drawPhotoInEllipse(ctx, img, cx, cy, rx, ry) {
+  const w = Math.max(1, Math.round(rx * 2));
+  const h = Math.max(1, Math.round(ry * 2));
+
+  const temp = document.createElement("canvas");
+  temp.width = w;
+  temp.height = h;
+  const tempCtx = temp.getContext("2d");
+
+  drawImageCover(tempCtx, img, 0, 0, w, h);
+
+  tempCtx.globalCompositeOperation = "destination-in";
+  tempCtx.beginPath();
+  tempCtx.ellipse(w / 2, h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
+  tempCtx.fillStyle = "#000";
+  tempCtx.fill();
+  tempCtx.globalCompositeOperation = "source-over";
+
+  ctx.drawImage(temp, cx - rx, cy - ry);
 }
 
 function roundRectPath(ctx, x, y, w, h, r) {
